@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 
 COPY unified-supervisord.conf supervisord.conf /etc/supervisord/
-COPY mc.ini /home/abc/.config/mc/ini
+COPY mc.ini /home/bresnow/.config/mc/ini
 COPY zsh-in-docker.sh /tmp/zsh-in-docker.sh
 
 
@@ -14,10 +14,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && apt-get install -y software-properties-common \
     && apt-get install -y apache2-utils \
     && echo "------------------------------------------------------ User" \
-    && useradd -u 8877 abc \
+    && useradd -u 8877 bresnow \
     && chmod -R 777 /home \
-    && mkdir -p /home/abc \
-    && chown -R abc /home/abc \
+    && mkdir -p /home/bresnow \
+    && chown -R bresnow /home/bresnow \
     && echo "------------------------------------------------------ Python" \
     && add-apt-repository ppa:deadsnakes/ppa \
     && apt-get install -y python3.9 \ 
@@ -37,7 +37,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && apt-get install -y nano vim \
     && apt-get install -y git git-flow \
     && echo "# Allow non-admin users to install packages" >> /etc/sudoers \
-    && echo "abc ALL = NOPASSWD : /usr/bin/apt, /usr/bin/apt-get, /usr/bin/aptitude, /usr/local/bin/pip, /usr/local/bin/systemctl, /usr/bin/dpkg, /usr/sbin/dpkg-reconfigure" >> /etc/sudoers \
+    && echo "bresnow ALL = NOPASSWD : /usr/bin/apt, /usr/bin/apt-get, /usr/bin/aptitude, /usr/local/bin/pip, /usr/local/bin/systemctl, /usr/bin/dpkg, /usr/sbin/dpkg-reconfigure" >> /etc/sudoers \
     && echo "------------------------------------------------------ Nodeenv" \
     && pip install nodeenv \
     && apt-get install -y yarn \
@@ -48,8 +48,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && chmod -R 777 /var/log \
     && chmod gu+rw /var/run \
     && chmod gu+s /usr/sbin/cron \
-    && echo "# Allow cron for user abc" >> /etc/sudoers \
-    && echo "abc ALL = NOPASSWD : /usr/sbin/cron " >> /etc/sudoers \
+    && echo "# Allow cron for user bresnow" >> /etc/sudoers \
+    && echo "bresnow ALL = NOPASSWD : /usr/sbin/cron " >> /etc/sudoers \
     && echo "------------------------------------------------------ Supervisor" \
     && apt-get remove -y cmdtest \
     && apt-get install -y supervisor \
@@ -84,9 +84,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     -a 'bindkey "\$terminfo[kcuu1]" history-substring-search-up' \
     -a 'bindkey "\$terminfo[kcud1]" history-substring-search-down' \
     && printf '%s\n%s\n' "export ZSH_DISABLE_COMPFIX=true" "$(cat /root/.zshrc)" > /root/.zshrc \
-    && echo "------------------------------------------------------ ZSH abc" \
+    && echo "------------------------------------------------------ ZSH bresnow" \
     && mkdir -p /home/project \
-    && HOME=/home/abc \
+    && HOME=/home/bresnow \
     && /tmp/zsh-in-docker.sh \
     -t https://github.com/pascaldevink/spaceship-zsh-theme \
     -a 'SPACESHIP_PROMPT_ADD_NEWLINE="false"' \
@@ -110,7 +110,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     -a 'bindkey "\$terminfo[kcuu1]" history-substring-search-up' \
     -a 'bindkey "\$terminfo[kcud1]" history-substring-search-down' \
     && rm /tmp/zsh-in-docker.sh \
-    && printf '%s\n%s\n' "export ZSH_DISABLE_COMPFIX=true" "$(cat /home/abc/.zshrc)" > /home/abc/.zshrc \
+    && printf '%s\n%s\n' "export ZSH_DISABLE_COMPFIX=true" "$(cat /home/bresnow/.zshrc)" > /home/bresnow/.zshrc \
     && echo "------------------------------------------------------ Docker" \
     && apt-get install -y apt-transport-https ca-certificates gnupg lsb-release \
     && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
@@ -129,22 +129,22 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && cd /tmp/ttyd/build && make && make install \
     && rm -rf /tmp/ttyd \
     && echo "------------------------------------------------------ User" \
-    && chown abc /home/project \
+    && chown bresnow /home/project \
     && chmod 777 /etc/supervisord/ \
-    && mkdir -p /home/abc/.local/bin \ 
-    && chmod 755 /home/abc/.local && chmod 755 /home/abc/.local/bin \
-    && chown abc /home/abc/.local && chown abc /home/abc/.local/bin  \
-    && find /home -type d | xargs -I{} chown -R abc {} \
-    && find /home -type f | xargs -I{} chown abc {} \
+    && mkdir -p /home/bresnow/.local/bin \ 
+    && chmod 755 /home/bresnow/.local && chmod 755 /home/bresnow/.local/bin \
+    && chown bresnow /home/bresnow/.local && chown bresnow /home/bresnow/.local/bin  \
+    && find /home -type d | xargs -I{} chown -R bresnow {} \
+    && find /home -type f | xargs -I{} chown bresnow {} \
     && echo "------------------------------------------------------ Clean" \
     && apt-get -y autoremove \
     && apt-get -y clean \
     && apt-get -y autoclean
 
 
-USER abc
+USER bresnow
 
-ENV PATH="/home/abc/.local/bin:${PATH}"
+ENV PATH="/home/bresnow/.local/bin:${PATH}"
 
 
 ###### ENTRY
