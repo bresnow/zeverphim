@@ -3,8 +3,6 @@
 echo "Name your nfs volume"
 read -r NAME
 
-mkvol "$NAME" 
-
 ssh root@3gcf.s.time4vps.cloud "mkdir -p /store/$NAME"
 
 echo "Connecting to node0"..
@@ -23,5 +21,4 @@ ssh -p 4669 bresnow@vverkan02den.bresnow.design "docker volume create --driver l
 
 
 echo "Connecting to node3"..
-ssh -p 4669 bresnow@vverkan03den.bresnow.design  "docker volume create --driver local --name "$NAME" --opt type=nfs --opt device=:/store/"$NAME" --opt o=addr=3gcf.s.time4vps.cloud,rw,nolock"'
-
+ssh -p 4669 bresnow@vverkan03den.bresnow.design  "docker volume create --driver local --name "$NAME" --opt type=nfs --opt device=:/store/"$NAME" --opt o=addr=3gcf.s.time4vps.cloud,rw,nolock"
