@@ -122,7 +122,7 @@ Workspace has WEB-based terminal, and you will be able to use workspace from bro
 It is very easy to run your workspace in cloud on any server. You are completely independent on the 
 cloud provider, can easily start, stop and move workspaces between servers.    
 
-It is recommended to start workspace with authentication, otherwise anyone will be 
+It is recommended to start workspacewith authentication, otherwise anyone will be 
 able to use your workspace. Use this simple docker-compose file to start workspace in 
 cloud with basic authentication
 
