@@ -36,6 +36,9 @@ services:
       # You can have multiple <user:pass> separated with "," 
       - "traefik.http.middlewares.basic-auth.basicauth.users=admin:$$2y$$05$$eub6CV.CwUYCCQjNBvSf5uZnzdRmVwGZ/ncxecb9O7WxCR8aLuM3K"
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.constraint-label=traefik-public"
+
       # docs
       - "traefik.http.services.docs.loadbalancer.server.port=8020"
       - "traefik.http.routers.docs.service=docs"
