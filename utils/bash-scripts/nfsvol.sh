@@ -3,7 +3,7 @@
 echo "Name your nfs volume"
 read -r NAME
 
-ssh root@3gcf.s.time4vps.cloud "mkdir -p /store/$NAME"
+ssh root@3gcf.s.time4vps.cloud "mkdir -p /store/$NAME && chown -R nfsnobody:nfsnobody /store/$NAME"
 
 echo "Connecting to node0"..
 ssh -p 2546 bresnow@vverkan00den.bresnow.design "docker volume create --driver local --name "$NAME" --opt type=nfs --opt device=:/store/"$NAME" --opt o=addr=3gcf.s.time4vps.cloud,rw,nolock"

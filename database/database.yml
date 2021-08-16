@@ -1,0 +1,22 @@
+version: '3.7'
+services:
+    db:
+        image: mariadb:10.5.3
+        volumes:
+            - data:/var/lib/mysql
+        env_file:
+            - ./mariadb.env
+        networks:
+            - ghost
+        deploy:
+          placement:
+            constraints:
+              - node.role == manager
+              - node.labels.db.data == true
+networks:
+  ghost:
+    internal: true
+    
+volumes:
+  data:
+    external: true
