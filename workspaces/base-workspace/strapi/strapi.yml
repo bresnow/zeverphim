@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  db:
+    image: mariadb:10.5.3
+    volumes:
+      - dbdata:/var/lib/mysql
+    env_file:
+      - ./mariadb.env
+    networks:
+      - internal
+    deploy:
+      placement:
+        constraints:
+          - node.labels.node0 == true
+  strapi:
+    image: strapi/strapi
+    env_file:
+      - ./strapi.env
+    # ports:
+    #   - 9020:1337
+    deploy:
+      placement:
+        constraints:
+          - node.labels.node3 == true
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.strapi-http.rule=Host(`api.bresnow.design`)
+        - traefik.http.routers.strapi-http.entrypoints=http
+        - traefik.http.services.strapi.loadbalancer.server.port=1337
+    networks:
+      - internal
+      - proxy
+    depends_on:
+      - db
+    volumes:
+      - strapi:/srv/app
+    command: 'strapi start'
+
+volumes:
+  strapi:
+  dbdata:
+
+
+networks:
+  internal:
+    external: true
+    name: bds_internal
+  proxy:
+    external: true
+    name: traefik-public

@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  solusvm-runner:
+    image: bresnow/solusvm-ghrunner
+    env_file:
+      - /home/bresnow/workspace/github/solusvm.env
+    volumes:
+      - ./_work:/home/github/_work

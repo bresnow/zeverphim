@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    command: /bin/sh -c "sleep 5; n8n start"
+    user: root
+    env_file:
+      - ./n8n.env
+    volumes:
+      - n8n_data:/home/node/.n8n
+    deploy:
+      placement:
+        constraints:
+          - node.labels.n8n.n8n_data == true
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.n8n-http.rule=Host(`${DOMAIN:-n8n.bresnow.design}`)
+        - traefik.http.routers.n8n-http.entrypoints=http
+        - traefik.http.routers.n8n-http.middlewares=https-redirect
+        - traefik.http.routers.n8n-https.rule=Host(`${DOMAIN:-n8n.bresnow.design}`)
+        - traefik.http.routers.n8n-https.entrypoints=https
+        - traefik.http.routers.n8n-https.tls=true
+        - traefik.http.routers.n8n-https.tls.certresolver=http
+        # - traefik.http.services.n8n.loadbalancer.server.port=5678
+    networks:
+      - traefik
+      - internal
+
+  mariadb:
+    image: mariadb:10.5.9
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - n8n_db1:/var/lib/mysql:cached
+    env_file:
+      - ./n8n-db.env
+    networks:
+      - internal
+    deploy:
+      placement:
+        constraints:
+          - node.labels.n8n.n8n_db == true
+
+volumes:
+  n8n_data:
+  n8n_db1:
+
+networks:
+  internal:
+    driver: overlay
+    attachable: true
+  traefik:
+    external: true
+    name: traefik-public

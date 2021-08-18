@@ -8,7 +8,7 @@ services:
     env_file:
       - ./mariadb.env
     networks:
-      - ghost
+      - datanet
     deploy:
       placement:
         constraints:
@@ -50,9 +50,7 @@ services:
       - db
     networks:
       - proxy
-      - ghost
-
-
+      - datanet
 # docker config create --template-driver golang ghostconfig2 config.json.tmpl   
 configs:
   ghostconfig2:
@@ -60,12 +58,12 @@ configs:
 
 # ./utils/bash-scripts/nfsvol.sh
 volumes:
-  ghcontent:
-  database_data:    
+  #ghcontent:
+  database_data: 
 
 networks:
-  ghost:
-    internal: true
   proxy:
     external: true
     name: traefik-public
+  datanet:
+    external: true

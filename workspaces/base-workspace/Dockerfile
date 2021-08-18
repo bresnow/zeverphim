@@ -9,6 +9,7 @@ USER root
 
 
 COPY Cronicle-0.8.61 /opt/cronicle
+COPY strapi /opt/strapi
 
 RUN echo "------------------------------------------------------ cronicle" \
 	&& mkdir -p /opt/cronicle \
@@ -20,7 +21,7 @@ COPY supervisord-workspace-base.conf /etc/supervisord/
 COPY filebrowser.json /opt/filebrowser/.filebrowser.json
 
 COPY mkdocs /home/docs
-COPY README.md /home/docs/docs/get-started.md
+COPY README.md /home/docs/docs/get -started.md
 COPY mkdocs-requirements.txt /home/abc/installed-python-packages/mkdocs-requirements.txt
 
 RUN echo "------------------------------------------------------ filebrowser, ungit, static server" \
