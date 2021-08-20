@@ -6,4 +6,4 @@ services:
     env_file:
       - /home/bresnow/workspace/github/solusvm.env
     volumes:
-      - ./_work:/home/github/_work
+      - /var/run/docker.sock:/var/run/docker.sock:ro

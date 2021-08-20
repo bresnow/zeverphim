@@ -58,7 +58,7 @@ configs:
 
 # ./utils/bash-scripts/nfsvol.sh
 volumes:
-  #ghcontent:
+  ghcontent:
   database_data: 
 
 networks:

@@ -19,12 +19,13 @@ services:
       # Create an entrypoint "https" listening on port 443
       - --entrypoints.https.address=:443
       # Docker Workspaces ports
-      - --entrypoints.docs.address=:8020
-      - --entrypoints.filebrowser.address=:8021
-      - --entrypoints.staticfs.address=:8022
-      - --entrypoints.cronicle.address=:8023
-      - --entrypoints.ungit.address=:8024
-      - --entrypoints.ide.address=:8025
+      # - --entrypoints.docs.address=:8020
+      # - --entrypoints.filebrowser.address=:8021
+      # - --entrypoints.staticfs.address=:8022
+      # - --entrypoints.cronicle.address=:8023
+      # - --entrypoints.ungit.address=:8024
+      # - --entrypoints.ide.address=:8025
+      # - --entrypoints.n8n-n8n.address=:5678
         # Create the certificate resolver "le" for Let's Encrypt, uses the environment variable EMAIL
       - --certificatesresolvers.http.acme.email=bresnow@me.com
       # Store the Let's Encrypt certificates in the mounted volume
@@ -73,12 +74,12 @@ services:
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
         # traefik-http set up only to use the middleware to redirect to https
         # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-http.rule=Host(`proxy.floatingmammoth.io`)
+        - traefik.http.routers.traefik-public-http.rule=Host(`sys.proxy.bresnow.design`)
         - traefik.http.routers.traefik-public-http.entrypoints=http
         - traefik.http.routers.traefik-public-http.middlewares=https-redirect
         # traefik-https the actual router using HTTPS
         # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-https.rule=Host(`proxy.floatingmammoth.io`)
+        - traefik.http.routers.traefik-public-https.rule=Host(`sys.proxy.bresnow.design`)
         - traefik.http.routers.traefik-public-https.entrypoints=https
         - traefik.http.routers.traefik-public-https.tls=true
         # Use the special Traefik service api@internal with the web UI/Dashboard
@@ -110,5 +111,5 @@ networks:
   # Use the previously created public network "traefik-public", shared with other
   # services that need to be publicly available via this Traefik
   traefik-public:
-    driver: overlay
+    external: true
 

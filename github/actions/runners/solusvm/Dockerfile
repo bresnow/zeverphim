@@ -17,7 +17,7 @@ RUN apt-get update \
     jq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && useradd -m github \
+    && useradd -m github \       
     && usermod -aG sudo github \
     && echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 

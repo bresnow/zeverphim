@@ -1,0 +1,6 @@
+export NFS_VOL_NAME=mynfs NFS_LOCAL_MNT=/mnt/store  NFS_SERVER=3gcf.s.time4vps.cloud NFS_SHARE=/store NFS_OPTS=vers=4,soft
+
+docker run --mount \
+  "src=$NFS_VOL_NAME,dst=$NFS_LOCAL_MNT,volume-opt=device=:$NFS_SHARE,\"volume-opt=o=addr=$NFS_SERVER,$NFS_OPTS\",type=volume,volume-driver=local,volume-opt=type=nfs4" \
+--user=1000:1000 \
+  busybox ls $NFS_LOCAL_MNT
