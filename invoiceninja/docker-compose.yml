@@ -1,0 +1,98 @@
+version: '3.7'
+
+services:
+  server:
+    image: nginx
+    # restart: always
+    env_file: env
+    volumes:
+      # Vhost configuration
+      #- ./config/caddy/Caddyfile:/etc/caddy/Caddyfiledocker-com
+      # - $PWD/config/nginx/in-vhost.conf:/etc/nginx/conf.d/in-vhost.conf:ro
+      - $PWD/docker/app/public:/var/www/app/public:ro
+    configs:
+      - source: in-vhost-ssl.conf
+        target: /etc/nginx/conf.d/in-vhost.conf
+    depends_on:
+      - app
+    # Run webserver nginx on port 80
+    # Feel free to modify depending what port is already occupied
+    # ports:
+    #   - "553:80"
+    #   #- "443:443"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.node2 == true
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.server-http.rule=Host(`${DOMAIN:-invoice.bresnow.design}`)
+        - traefik.http.routers.server-http.entrypoints=http
+        - traefik.http.routers.server-http.middlewares=https-redirect
+        - traefik.http.routers.server-https.rule=Host(`${DOMAIN:-invoice.bresnow.design}`)
+        - traefik.http.routers.server-https.entrypoints=https
+        - traefik.http.routers.server-https.tls=true
+        - traefik.http.routers.server-https.tls.certresolver=http
+        - traefik.http.services.server.loadbalancer.server.port=80
+    networks:
+      - invoiceninja
+      - traefik
+    extra_hosts:
+      - "in5.localhost:192.168.0.124 " #host and ip
+
+  app:
+    image: invoiceninja/invoiceninja:5
+    env_file: env
+    # restart: always
+    user: root
+    volumes:
+      #- $PWD/config/hosts:/etc/hosts:ro
+      - invnj_public:/var/www/app/public:rw,delegated
+      - /mnt/store:/var/www/app/storage:rw,delegated
+    deploy:
+      placement:
+        constraints:
+          - node.labels.node2 == true
+    configs:
+      - source: invhost
+        target: /etc/hosts
+    depends_on:
+      - db
+    networks:
+      - invoiceninja
+    extra_hosts:
+      - "in5.localhost:192.168.0.124 " #host and ip
+
+  db:
+    image: mysql:5
+    ports:
+      - "3305:3306"
+    # restart: always
+    env_file: env
+    deploy:
+      placement:
+        constraints:
+          - node.labels.node2 == true
+    volumes:
+      - $PWD/docker/mysql/data:/var/lib/mysql:rw,delegated
+    networks:
+      - invoiceninja
+    extra_hosts:
+      - "in5.localhost:192.168.0.124 " #host and ip
+
+volumes: 
+  invnj_public:
+
+configs:
+  in-vhost-ssl.conf:
+    external: true
+  invhost:
+    external: true
+
+networks:
+  invoiceninja:
+  traefik:
+    external: true
+    name: traefik-public

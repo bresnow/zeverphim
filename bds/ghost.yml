@@ -1,0 +1,69 @@
+version: '3.7'
+
+services:
+  db:
+    image: mariadb:10.5.3
+    volumes:
+      - database_data:/var/lib/mysql
+    env_file:
+      - ./mariadb.env
+    networks:
+      - datanet
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.db.data == true
+
+  ghost:
+    image: ghost
+    volumes:
+      - ghcontent:/var/lib/ghost/content
+    env_file:
+        - ./ghost-mariadb.env
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.ghost.ghost-front == true
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.ghost-http.rule=Host(`${DOMAIN:-bresnow.design}`)
+        - traefik.http.routers.ghost-http.entrypoints=http
+        - traefik.http.routers.ghost-http.middlewares=https-redirect
+        - traefik.http.routers.ghost-https.rule=Host(`${DOMAIN:-bresnow.design}`)
+        - traefik.http.routers.ghost-https.entrypoints=https
+        - traefik.http.routers.ghost-https.tls=true
+        - traefik.http.routers.ghost-https.tls.certresolver=http
+        - traefik.http.services.ghost.loadbalancer.server.port=2368
+      resources:
+        limits:
+          memory: 200M
+        reservations:
+          memory: 200M
+    configs:
+      - source: ghostconfig2
+        target: /var/lib/ghost/config.production.json
+    depends_on:
+      - db
+    networks:
+      - proxy
+      - datanet
+# docker config create --template-driver golang ghostconfig2 config.json.tmpl   
+configs:
+  ghostconfig2:
+    external: true
+
+# ./utils/bash-scripts/nfsvol.sh
+volumes:
+  ghcontent:
+  database_data: 
+
+networks:
+  proxy:
+    external: true
+    name: traefik-public
+  datanet:
+    external: true

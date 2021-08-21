@@ -17,13 +17,17 @@ dpkg -s $pkg &> /dev/null
 
 
 echo "Name of the share" 
-read share
+read -r share
 echo "Absolute path to share" 
-read path
+read -r path
 
 aptcheck
 
+<<<<<<< HEAD
 sudo cat > /etc/samba/smb.conf << EOF 
+=======
+sudo cat /etc/samba/smb.conf << EOF 
+>>>>>>> c2bdea48ddd3c491f50b977bd31688fed56a0bbd
 ["$share"]
     comment = Samba on Ubuntu
     path = $path
