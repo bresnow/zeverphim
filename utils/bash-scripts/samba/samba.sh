@@ -23,7 +23,7 @@ read path
 
 aptcheck
 
-sudo cat >> /etc/samba/smb.conf << EOF 
+sudo cat > /etc/samba/smb.conf << EOF 
 ["$share"]
     comment = Samba on Ubuntu
     path = $path

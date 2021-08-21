@@ -171,7 +171,7 @@ You can add multiple port mappings:
 docker run --name space-1 -d -p 8020-8030:8020-8030 -p 8080:8080 -p 443:443 alnoda/base-workspace
 ```
 
-**NOTE:** It is not a problem if you don't expose any ports, but later on realise you need them - 
+**NOTE:** It is not a problem c you don't expose any ports, but later on realise you need them - 
 you will just create new image, and run it exposing the required port (look in the section [Create new image](#create-new-image)) 
 
 ### Docker in docker
